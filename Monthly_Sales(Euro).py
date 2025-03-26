@@ -4,8 +4,13 @@ import pandas as pd
 data = pd.read_csv(r"C:\Users\pc\OneDrive\Desktop\python practice\CleanedBakerySales.csv")
 
 data['date'] = pd.to_datetime(data['date'], format = 'mixed')
+
+data['month_num'] = data['date'].dt.month
 data['month'] = data['date'].dt.strftime('%B')
-monthly_sales = data.groupby('month', observed=True)['unit_price'].sum().reset_index()
+
+monthly_sales = data.groupby(['month_num','month'], observed=True)['unit_price'].sum().reset_index()
+monthly_sales = monthly_sales.sort_values('month_num')
+
 
 max_month = monthly_sales['unit_price'].idxmax()
 max_sales = monthly_sales.loc[max_month, 'unit_price']
@@ -27,4 +32,5 @@ for bar in bars:
 plt.xlabel('Sales(€)')
 plt.ylabel('Month')
 plt.title('Total Sales(in €) Of Each Month')
+plt.gca().invert_yaxis()
 plt.show()
